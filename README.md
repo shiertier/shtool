@@ -1,1 +1,1 @@
-'pip install git+https://github.com/shiertier/shtool.git'
+```pip install git+https://github.com/shiertier/shtool.git```
