@@ -5,7 +5,7 @@ def is_directory(path):
     if not os.path.isdir(path):
         raise ValueError(f"无效的目录路径: {path}")
         exit()
-    os.makedirs(output_directory, exist_ok=True)
+    os.makedirs(path, exist_ok=True)
 
 def is_file(path):
     if not os.path.isfile(path):
