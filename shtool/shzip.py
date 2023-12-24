@@ -71,16 +71,17 @@ def unzip_zipfile(zip_path, output_directory=None, password="shiertier", extract
             zipf.setpassword(password)
             
         if extract_to_subfolder:
-            # Extract to a subfolder with the base name of the zip file
             base_name = os.path.splitext(os.path.basename(zip_path))[0]
             extract_path = os.path.join(output_directory, base_name)
         else:
-            # Extract directly to the output directory
             extract_path = output_directory
         
-        with zipf.open("__content__") as f:
-            with open(extract_path, "wb") as output_file:
-                output_file.write(f.read())
+        for file_info in zipf.infolist():
+            with zipf.open(file_info.filename) as f:
+                output_file_path = os.path.join(extract_path, file_info.filename)
+                os.makedirs(os.path.dirname(output_file_path), exist_ok=True)
+                with open(output_file_path, "wb") as output_file:
+                    output_file.write(f.read())
 
         
 def main():
