@@ -6,56 +6,81 @@ from . import shcheck
 
 def zip_file(file_path, output_directory=None, password="shiertier"):
     password = password.encode('utf-8') if password else None
+    
     if output_directory is None:
         output_directory = os.getcwd()
+        
     shcheck.is_file(file_path)
     shcheck.is_directory(output_directory)
+    
     try:
         file_name, file_extension = os.path.splitext(os.path.basename(file_path))
         zipfile_name = f"{file_name}.zip"
         zip_file_path = os.path.join(output_directory, zipfile_name)
+        
         with pyzipper.AESZipFile(zip_file_path, 'w', compression=pyzipper.ZIP_LZMA, encryption=pyzipper.WZ_AES) as zipf:
             if password:
                 zipf.setpassword(password)
             zipf.write(file_path, arcname=file_name)
         print(f"文件 '{file_path}' 已加密并保存到 '{zip_file_path}'.")
+        
     except Exception as e:
         print(f"发生了一个错误: {str(e)}")
         exit()
 
 def zip_directory(directory_path, output_directory=None, password="shiertier"):
     password = password.encode('utf-8') if password else None
+    
     if output_directory is None:
         output_directory = os.getcwd()
+        
     shcheck.is_directory(directory_path)
     shcheck.is_directory(output_directory)
+    
     try:
         directory_name = os.path.basename(directory_path)
         zipfile_name = directory_name + '.zip'
         zip_file_path = os.path.join(output_directory, zipfile_name)
+        
         with pyzipper.AESZipFile(zip_file_path, 'w', compression=pyzipper.ZIP_LZMA, encryption=pyzipper.WZ_AES) as zipf:
             if password:
                 zipf.setpassword(password)
+                
             for root, _, files in os.walk(directory_path):
                 for file in files:
                     file_path = os.path.join(root, file)
                     arcname = os.path.relpath(file_path, directory_path)
                     zipf.write(file_path, arcname=arcname)
+                    
         print(f"路径 '{directory_name}' 已加密并保存到 '{zip_file_path}'.")
+        
     except Exception as e:
         print(f"发生了一个错误: {str(e)}")
         exit()
 
-def unzip_zipfile(zip_path, output_directory=None, password="shiertier"):
+def unzip_zipfile(zip_path, output_directory=None, password="shiertier", extract_to_subfolder=True):
     password = password.encode('utf-8') if password else None
     shcheck.is_zip_file(zip_path)
+    
     if output_directory is None:
         output_directory = os.getcwd()
     shcheck.is_directory(output_directory)
+    
     with pyzipper.AESZipFile(zip_path, 'r', compression=pyzipper.ZIP_LZMA, encryption=pyzipper.WZ_AES) as zipf:
         if password:
             zipf.setpassword(password)
-        zipf.extractall(output_directory)
+            
+        if extract_to_subfolder:
+            # Extract to a subfolder with the base name of the zip file
+            base_name = os.path.splitext(os.path.basename(zip_path))[0]
+            extract_path = os.path.join(output_directory, base_name)
+        else:
+            # Extract directly to the output directory
+            extract_path = output_directory
+        
+        with zipf.open("__content__") as f:
+            with open(extract_path, "wb") as output_file:
+                output_file.write(f.read())
 
         
 def main():
