@@ -48,7 +48,7 @@ def zip_directory(directory_path, output_directory=None, password="shiertier"):
 
 def unzip_zipfile(zip_path, output_directory=None, password="shiertier"):
     password = password.encode('utf-8') if password else None
-    is_zip_file(zip_path)
+    shcheck.is_zip_file(zip_path)
     if output_directory is None:
         output_directory = os.getcwd()
     shcheck.is_directory(output_directory)
