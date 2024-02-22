@@ -28,7 +28,7 @@ def sftp_transfer_thread(event, local_dirctory, remote_dirctory, url, port, user
 
 def sftp_download_dirctory(local_dirctory, remote_dirctory, url, port, username, password):
     shcheck.is_directory(local_dirctory)
-    shcheck.is_directory(remote_dirctory, False)
+    shcheck.is_directory(remote_dirctory)
     try:
         transport = paramiko.Transport((url, port))
         transport.connect(username=username, password=password)
@@ -81,8 +81,8 @@ def main():
     parser.add_argument("-p", '--port', type=int, help='SFTP的端口')
     parser.add_argument("-n", '--name', type=str, help='SFTP的用户名')
     parser.add_argument("-pw", '--password', type=str, help='SFTP的密码')
-    parser.add_argument("-f","--downfile", action='store_true', help='设置时保存指定文件')
-    parser.add_argument("-d","--downdirectory", action='store_true', help='设置时保存指定目录')
+    parser.add_argument("-f","--downfile", type=str, help='设置时保存指定文件')
+    parser.add_argument("-d","--downdirectory", type=str, help='设置时保存指定目录')
     parser.add_argument("-s", '--save', type=str, help='保存的位置')
     args = parser.parse_args()
 
